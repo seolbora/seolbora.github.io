@@ -1,0 +1,1720 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>설보라 아카이브</title>
+<meta name="theme-color" content="#3B6B35">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="설보라 아카이브">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="favicon-64.png" type="image/png">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;500;600;700&family=Pretendard:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#1E2A1B;
+    --ink-soft:#4C5A45;
+    --paper:#EEF3E6;
+    --paper-card:#FFFFFF;
+    --line:#D7E1C9;
+    --moss:#3B6B35;
+    --moss-soft:#E3EEDA;
+    --stone:#66756A;
+    --stone-soft:#E6EAE2;
+    --wood:#8B5E3C;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Pretendard',-apple-system,sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:760px;margin:0 auto;padding:48px 24px 96px;}
+
+  /* header */
+  .brand{display:flex;align-items:baseline;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:6px;}
+  .brand-id{display:flex;align-items:center;gap:12px;}
+  .brand-avatar{
+    width:40px;height:40px;border-radius:50%;overflow:hidden;flex:none;
+    background:var(--stone-soft);display:flex;align-items:center;justify-content:center;
+    border:1.5px solid var(--line);font-size:18px;color:var(--stone);
+    cursor:pointer;
+  }
+  .brand-avatar img{width:100%;height:100%;object-fit:cover;display:block;}
+  .brand h1{
+    font-family:'Noto Serif KR',serif;
+    font-weight:700;
+    font-size:32px;
+    margin:0;
+    letter-spacing:-0.01em;
+  }
+  .brand .mark{color:var(--moss);}
+  .tagline{
+    font-family:'Noto Serif KR',serif;
+    font-size:15px;
+    color:var(--ink-soft);
+    margin:0 0 32px;
+    font-style:italic;
+  }
+
+  /* mode switch */
+  .modes{display:flex;gap:8px;margin-bottom:32px;border-bottom:1px solid var(--line);padding-bottom:0;flex-wrap:wrap;}
+  .mode-btn{
+    background:none;border:none;
+    font-family:'Pretendard';font-size:14px;font-weight:600;
+    color:var(--ink-soft);
+    padding:10px 4px;margin-right:20px;cursor:pointer;
+    border-bottom:2px solid transparent;
+    transition:color .15s;
+  }
+  .mode-btn.active{color:var(--moss);border-bottom-color:var(--moss);}
+  .mode-btn:hover{color:var(--ink);}
+
+  /* category tabs */
+  .tabs{display:flex;gap:8px;margin-bottom:24px;flex-wrap:wrap;}
+  .tab{
+    padding:7px 14px;border-radius:20px;
+    font-size:13px;font-weight:500;
+    border:1px solid var(--line);
+    background:var(--paper-card);
+    color:var(--ink-soft);
+    cursor:pointer;
+  }
+  .tab.active{background:var(--ink);color:#fff;border-color:var(--ink);}
+
+  .tabs-row-wrap{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:16px;}
+  .tabs-row-wrap .tabs{margin-bottom:0;}
+  .cat-edit-toggle{
+    background:none;border:1px solid var(--line);border-radius:20px;
+    padding:6px 13px;font-size:12px;font-weight:600;color:var(--ink-soft);cursor:pointer;flex-shrink:0;
+  }
+  .cat-edit-toggle:hover{color:var(--moss);border-color:var(--moss);}
+  .cat-manage{
+    background:var(--paper-card);border:1px solid var(--line);border-radius:4px;
+    padding:16px 18px;margin-bottom:24px;display:none;
+  }
+  .cat-manage.open{display:block;}
+  .cat-manage-list{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px;}
+  .cat-row{
+    display:flex;align-items:center;gap:6px;
+    background:var(--stone-soft);border-radius:16px;
+    padding:6px 6px 6px 12px;font-size:13px;color:var(--ink);
+  }
+  .cat-remove{
+    background:none;border:none;color:var(--stone);cursor:pointer;
+    font-size:12px;width:20px;height:20px;border-radius:50%;
+  }
+  .cat-remove:hover{color:#b23b3b;background:#fff;}
+  .cat-add-row{display:flex;gap:8px;}
+  .cat-add-row input{
+    flex:1;padding:9px 11px;border:1px solid var(--line);border-radius:3px;
+    font-family:'Pretendard';font-size:14px;background:#fff;color:var(--ink);
+  }
+  .cat-add-row input:focus{outline:2px solid var(--moss);outline-offset:1px;}
+
+  /* add form */
+  .add-card{
+    background:var(--paper-card);
+    border:1px solid var(--line);
+    border-radius:4px;
+    padding:20px;
+    margin-bottom:32px;
+    display:none;
+  }
+  .add-card.open{display:block;}
+  .add-toggle{
+    display:flex;align-items:center;gap:8px;
+    background:var(--ink);color:#fff;border:none;
+    padding:10px 18px;border-radius:4px;
+    font-size:14px;font-weight:600;cursor:pointer;
+    margin-bottom:24px;
+  }
+  .add-toggle:hover{background:var(--moss);}
+  .field{margin-bottom:14px;}
+  .field label{display:block;font-size:12px;font-weight:600;color:var(--ink-soft);margin-bottom:5px;}
+  .field input[type=text], .field textarea, .field select{
+    width:100%;padding:9px 11px;
+    border:1px solid var(--line);border-radius:3px;
+    font-family:'Pretendard';font-size:14px;
+    background:#fff;color:var(--ink);
+  }
+  .field textarea{resize:vertical;min-height:64px;line-height:1.5;}
+  .field input:focus, .field textarea:focus, .field select:focus{outline:2px solid var(--moss);outline-offset:1px;}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  .toggle-row{display:flex;align-items:center;gap:10px;margin-bottom:18px;}
+  .toggle-row label{font-size:13px;color:var(--ink-soft);cursor:pointer;}
+  .save-btn{
+    background:var(--moss);color:#fff;border:none;
+    padding:10px 20px;border-radius:4px;
+    font-size:14px;font-weight:600;cursor:pointer;
+    flex-shrink:0;
+  }
+  .save-btn:hover{background:#2E5429;}
+
+  /* image field */
+  .img-input-row{display:flex;gap:8px;align-items:center;}
+  .img-input-row input[type=text]{flex:1;}
+  .img-input-row input[type=file]{flex:none;font-size:12px;max-width:150px;}
+  .img-hint{font-size:11px;color:var(--stone);margin-top:5px;}
+  .img-preview{margin-top:10px;}
+  .img-preview img{max-width:120px;max-height:120px;border-radius:4px;border:1px solid var(--line);display:block;object-fit:cover;}
+
+  /* entries */
+  .empty{
+    text-align:center;color:var(--ink-soft);
+    padding:48px 20px;
+    font-family:'Noto Serif KR',serif;font-style:italic;font-size:14px;
+    border:1px dashed var(--line);border-radius:4px;
+  }
+  .entry{
+    background:var(--paper-card);
+    border:1px solid var(--line);
+    border-left:3px solid var(--stone);
+    border-radius:3px;
+    padding:16px 18px;
+    margin-bottom:12px;
+    display:flex;gap:14px;
+  }
+  .entry.public{border-left-color:var(--moss);}
+  .entry-thumb{
+    flex:none;width:64px;height:64px;border-radius:4px;overflow:hidden;
+    border:1px solid var(--line);background:var(--stone-soft);
+  }
+  .entry-thumb img{width:100%;height:100%;object-fit:cover;display:block;}
+  .entry-body{flex:1;min-width:0;}
+  .entry-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;}
+  .entry-title{font-family:'Noto Serif KR',serif;font-weight:600;font-size:16px;margin:0 0 4px;}
+  .entry-meta{font-size:11px;color:var(--ink-soft);margin-bottom:8px;}
+  .entry-meta .badge{
+    display:inline-block;background:var(--stone-soft);color:var(--stone);
+    padding:2px 8px;border-radius:10px;font-size:10px;font-weight:600;margin-right:6px;
+  }
+  .entry.public .entry-meta .badge.pub{background:var(--moss-soft);color:var(--moss);}
+  .entry-desc{font-size:14px;line-height:1.65;color:var(--ink);white-space:pre-wrap;}
+  .entry-link{font-size:12px;color:var(--moss);text-decoration:none;}
+  .entry-actions{display:flex;gap:6px;flex-shrink:0;}
+  .icon-btn{
+    background:none;border:none;cursor:pointer;
+    font-size:12px;color:var(--ink-soft);padding:3px 6px;
+  }
+  .icon-btn:hover{color:var(--moss);}
+
+  /* photo gallery grid */
+  .gallery-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(140px,1fr));
+    gap:10px;
+  }
+  .gallery-item{
+    position:relative;aspect-ratio:1/1;border-radius:4px;overflow:hidden;
+    cursor:pointer;border:1px solid var(--line);background:var(--stone-soft);
+  }
+  .gallery-item img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .2s ease;}
+  .gallery-item:hover img{transform:scale(1.06);}
+  .gallery-noimg{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:26px;color:var(--stone);}
+  .gallery-caption{
+    position:absolute;left:0;right:0;bottom:0;
+    background:linear-gradient(transparent,rgba(16,24,14,.72));
+    color:#fff;padding:20px 8px 6px;
+  }
+  .gallery-title{font-weight:600;font-size:12px;line-height:1.3;margin-bottom:2px;}
+  .gallery-date{font-size:10px;opacity:.85;}
+  .gallery-pub-dot{
+    position:absolute;top:6px;right:6px;width:8px;height:8px;border-radius:50%;
+    background:var(--moss);border:1.5px solid #fff;
+  }
+  .pin-remove-btn{
+    position:absolute;top:5px;left:5px;
+    background:rgba(16,24,14,.6);color:#fff;
+    border:none;border-radius:50%;width:22px;height:22px;
+    font-size:12px;line-height:1;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;
+    z-index:2;
+  }
+  .pin-remove-btn:hover{background:#b23b3b;}
+
+  .pin-download-btn{
+    position:absolute;bottom:5px;right:5px;
+    background:rgba(16,24,14,.6);color:#fff;border:none;border-radius:50%;
+    width:22px;height:22px;font-size:12px;line-height:1;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;z-index:2;
+  }
+  .pin-download-btn:hover{background:var(--moss);}
+
+  .pin-toolbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:10px;}
+  .pin-toolbar .count{font-size:13px;color:var(--ink-soft);}
+  .pin-bulk-actions{display:flex;align-items:center;gap:10px;}
+  .pin-select-toggle{
+    background:none;border:1px solid var(--line);border-radius:20px;
+    padding:6px 14px;font-size:12px;font-weight:600;color:var(--ink-soft);cursor:pointer;
+  }
+  .pin-select-toggle:hover{color:var(--moss);border-color:var(--moss);}
+  .pin-select-toggle.active{background:var(--ink);color:#fff;border-color:var(--ink);}
+  .pin-bulk-delete{
+    background:#b23b3b;color:#fff;border:none;border-radius:20px;
+    padding:7px 16px;font-size:12px;font-weight:600;cursor:pointer;
+  }
+  .pin-bulk-delete:disabled{opacity:.45;cursor:default;}
+  .pin-bulk-delete:hover:not(:disabled){background:#8f2e2e;}
+
+  .gallery-item.selecting{cursor:pointer;}
+  .pin-select-dot{
+    position:absolute;top:6px;right:6px;width:22px;height:22px;border-radius:50%;
+    border:2px solid #fff;background:rgba(16,24,14,.35);
+    display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;
+    z-index:2;
+  }
+  .gallery-item.selected{outline:3px solid var(--moss);outline-offset:-3px;}
+  .gallery-item.selected .pin-select-dot{background:var(--moss);border-color:#fff;}
+
+  /* image boards */
+  .board-create-row{
+    display:flex;gap:10px;margin-bottom:28px;
+  }
+  .board-create-row input{
+    flex:1;padding:10px 12px;
+    border:1px solid var(--line);border-radius:3px;
+    font-family:'Pretendard';font-size:14px;background:#fff;color:var(--ink);
+  }
+  .board-create-row input:focus{outline:2px solid var(--moss);outline-offset:1px;}
+  .board-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(210px,1fr));
+    gap:22px 18px;
+  }
+  .board-card{cursor:pointer;}
+  .board-cover{
+    display:grid;
+    grid-template-columns:1.5fr 1fr;
+    grid-template-rows:1fr 1fr;
+    gap:3px;
+    height:168px;
+    border-radius:14px;
+    overflow:hidden;
+    background:var(--stone-soft);
+  }
+  .board-cover img{width:100%;height:100%;object-fit:cover;display:block;}
+  .board-cover .ph{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:22px;color:var(--stone);background:var(--stone-soft);}
+  .board-cover .main{grid-row:1/3;}
+  .board-name{font-family:'Noto Serif KR',serif;font-weight:600;font-size:15px;margin:10px 0 2px;}
+  .board-meta{font-size:12px;color:var(--ink-soft);}
+  .board-detail-header{display:flex;align-items:center;gap:12px;margin-bottom:20px;}
+  .board-detail-title{font-family:'Noto Serif KR',serif;font-weight:700;font-size:21px;margin:0;flex:1;}
+  .back-btn{
+    background:none;border:1px solid var(--line);border-radius:20px;
+    padding:7px 14px;font-size:13px;cursor:pointer;color:var(--ink-soft);flex-shrink:0;
+  }
+  .back-btn:hover{color:var(--moss);border-color:var(--moss);}
+  .board-delete-btn{
+    background:none;border:none;color:var(--stone);
+    font-size:12px;cursor:pointer;flex-shrink:0;
+  }
+  .board-delete-btn:hover{color:#b23b3b;}
+
+  /* lightbox */
+  .lightbox-overlay{
+    position:fixed;inset:0;background:rgba(16,22,13,.85);
+    display:flex;align-items:center;justify-content:center;padding:24px;z-index:100;
+  }
+  .lightbox-overlay.hidden{display:none;}
+  .lightbox-close{
+    position:absolute;top:18px;right:22px;background:none;border:none;
+    color:#fff;font-size:26px;line-height:1;cursor:pointer;
+  }
+  .lightbox-box{
+    background:var(--paper-card);border-radius:6px;overflow:hidden;
+    max-width:600px;width:100%;max-height:88vh;display:flex;flex-direction:column;
+  }
+  .lightbox-img-wrap{background:#0F150D;display:flex;align-items:center;justify-content:center;max-height:56vh;overflow:hidden;}
+  .lightbox-img-wrap img{max-width:100%;max-height:56vh;display:block;}
+  .lightbox-body{padding:18px 20px;overflow-y:auto;}
+  .lightbox-title{font-family:'Noto Serif KR',serif;font-weight:600;font-size:17px;margin:0 0 6px;}
+  .lightbox-meta{font-size:11px;color:var(--ink-soft);margin-bottom:10px;}
+  .lightbox-desc{font-size:14px;line-height:1.65;color:var(--ink);white-space:pre-wrap;margin-bottom:8px;}
+  .lightbox-download{width:100%;margin-top:8px;}
+
+  /* portfolio view */
+  .pf-header{text-align:center;margin-bottom:48px;}
+  .pf-avatar{
+    width:96px;height:96px;border-radius:50%;overflow:hidden;
+    margin:0 auto 16px;background:var(--stone-soft);
+    display:flex;align-items:center;justify-content:center;
+    border:2px solid var(--line);font-size:34px;color:var(--stone);
+    cursor:pointer;
+  }
+  .pf-avatar img{width:100%;height:100%;object-fit:cover;display:block;}
+  .pf-header h2{font-family:'Noto Serif KR',serif;font-size:26px;margin:0 0 8px;}
+  .pf-header p{color:var(--ink-soft);font-size:14px;margin:0;}
+  .pf-section{margin-bottom:40px;}
+  .pf-section h3{
+    font-family:'Noto Serif KR',serif;font-size:14px;font-weight:600;
+    letter-spacing:0.02em;color:var(--moss);
+    margin:0 0 16px;padding-bottom:8px;border-bottom:1px solid var(--line);
+  }
+  .pf-item{margin-bottom:20px;}
+  .pf-item .t{font-family:'Noto Serif KR',serif;font-weight:600;font-size:16px;margin:0 0 4px;}
+  .pf-item .d{font-size:14px;line-height:1.65;color:var(--ink-soft);margin:0 0 4px;white-space:pre-wrap;}
+  .pf-item a{font-size:12px;color:var(--moss);}
+  .print-btn{
+    display:block;margin:0 auto 32px;
+    background:var(--ink);color:#fff;border:none;
+    padding:10px 20px;border-radius:4px;
+    font-size:13px;font-weight:600;cursor:pointer;
+  }
+  .print-btn:hover{background:var(--moss);}
+
+  /* profile / link-in-bio */
+  .pf-links{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin:16px 0 0;}
+  .pf-link-pill{
+    display:inline-flex;align-items:center;gap:6px;
+    padding:8px 16px;border-radius:20px;
+    border:1px solid var(--line);background:var(--paper-card);
+    color:var(--ink);text-decoration:none;
+    font-size:13px;font-weight:600;
+  }
+  .pf-link-pill:hover{border-color:var(--moss);color:var(--moss);}
+
+  .profile-toggle{
+    display:inline-flex;align-items:center;gap:6px;
+    background:none;border:1px solid var(--line);color:var(--ink-soft);
+    padding:7px 14px;border-radius:20px;
+    font-size:12px;font-weight:600;cursor:pointer;
+    margin-bottom:20px;
+  }
+  .profile-toggle:hover{color:var(--moss);border-color:var(--moss);}
+  .profile-card{
+    background:var(--paper-card);
+    border:1px solid var(--line);
+    border-radius:4px;
+    padding:20px;
+    margin-bottom:24px;
+    display:none;
+  }
+  .profile-card.open{display:block;}
+  .link-row{display:flex;gap:8px;margin-bottom:8px;align-items:center;}
+  .link-row input{flex:1;}
+  .link-row .link-label{width:110px;flex:none;}
+  .link-remove{
+    background:none;border:none;color:var(--ink-soft);cursor:pointer;
+    font-size:13px;padding:6px 8px;flex:none;
+  }
+  .link-remove:hover{color:var(--moss);}
+  .link-add{
+    background:none;border:1px dashed var(--line);color:var(--ink-soft);
+    padding:8px;border-radius:3px;width:100%;
+    font-size:13px;cursor:pointer;margin-bottom:14px;
+  }
+  .link-add:hover{color:var(--moss);border-color:var(--moss);}
+
+  .avatar-edit-row{display:flex;gap:14px;align-items:flex-start;}
+  .avatar-preview{
+    width:72px;height:72px;border-radius:50%;overflow:hidden;flex:none;
+    background:var(--stone-soft);display:flex;align-items:center;justify-content:center;
+    border:1.5px solid var(--line);font-size:26px;color:var(--stone);
+  }
+  .avatar-preview img{width:100%;height:100%;object-fit:cover;display:block;}
+  .avatar-edit-inputs{flex:1;min-width:0;}
+
+  @media print{
+    .pf-links,.profile-toggle{display:none !important;}
+  }
+
+  @media print{
+    .modes,.tabs,.add-card,.add-toggle,.print-btn,.entry-actions,.board-create-row,.board-detail-header{display:none !important;}
+    body{background:#fff;}
+    .entry{border:none;border-bottom:1px solid #ddd;border-radius:0;}
+  }
+  @media(max-width:480px){
+    .row2{grid-template-columns:1fr;}
+    .gallery-grid{grid-template-columns:repeat(auto-fill,minmax(110px,1fr));}
+    .board-grid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr));}
+    .board-create-row{flex-direction:column;}
+  }
+
+  /* toast + custom confirm (app-like, no native browser dialogs) */
+  .toast-stack{
+    position:fixed;left:50%;bottom:28px;transform:translateX(-50%);
+    display:flex;flex-direction:column;gap:8px;z-index:200;
+    width:min(92vw,420px);pointer-events:none;
+  }
+  .toast{
+    background:var(--ink);color:#fff;
+    padding:12px 16px;border-radius:8px;
+    font-size:13px;line-height:1.5;
+    box-shadow:0 6px 20px rgba(0,0,0,.18);
+    opacity:0;transform:translateY(8px);
+    transition:opacity .2s ease,transform .2s ease;
+  }
+  .toast.show{opacity:1;transform:translateY(0);}
+
+  .confirm-overlay{
+    position:fixed;inset:0;background:rgba(16,22,13,.55);
+    display:flex;align-items:center;justify-content:center;padding:24px;z-index:201;
+  }
+  .confirm-overlay.hidden{display:none;}
+  .confirm-box{
+    background:var(--paper-card);border-radius:10px;
+    max-width:360px;width:100%;padding:24px;
+    box-shadow:0 12px 32px rgba(0,0,0,.2);
+  }
+  .confirm-msg{font-size:14px;line-height:1.6;color:var(--ink);margin-bottom:20px;white-space:pre-wrap;}
+  .confirm-actions{display:flex;justify-content:flex-end;gap:8px;}
+  .confirm-btn{
+    border:none;border-radius:20px;padding:9px 18px;
+    font-size:13px;font-weight:600;cursor:pointer;
+  }
+  .confirm-cancel{background:var(--stone-soft);color:var(--ink);}
+  .confirm-cancel:hover{background:#dbe1d4;}
+  .confirm-ok{background:var(--wood);color:#fff;}
+  .confirm-ok:hover{background:#734a2d;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="brand">
+    <div class="brand-id">
+      <div class="brand-avatar" id="brandAvatar">👤</div>
+      <h1>설<span class="mark">보라</span> 아카이브</h1>
+    </div>
+  </div>
+  <p class="tagline">Personal Archive — In Search of a Name</p>
+
+  <div class="modes">
+    <button class="mode-btn active" data-mode="archive">나의 아카이브</button>
+    <button class="mode-btn" data-mode="boards">이미지 보드</button>
+    <button class="mode-btn" data-mode="portfolio">포트폴리오 보기</button>
+  </div>
+
+  <!-- ARCHIVE MODE -->
+  <div id="archiveMode">
+    <div class="tabs-row-wrap">
+      <div class="tabs" id="tabsRow"></div>
+      <button class="cat-edit-toggle" id="catEditToggle">⚙ 카테고리 편집</button>
+    </div>
+
+    <div class="cat-manage" id="catManage"></div>
+
+    <button class="add-toggle" id="addToggle">+ 새 기록 추가</button>
+
+    <div class="add-card" id="addCard">
+      <div class="field">
+        <label>카테고리</label>
+        <select id="f_cat"></select>
+      </div>
+      <div class="field">
+        <label>제목</label>
+        <input type="text" id="f_title" placeholder="예: 감정 공포증은 유연하다 — 1화">
+      </div>
+      <div class="field">
+        <label>내용 / 메모</label>
+        <textarea id="f_desc" placeholder="짧은 단상, 소개, 왜 좋았는지, 무엇을 배웠는지 등"></textarea>
+      </div>
+      <div class="field">
+        <label>이미지 (선택)</label>
+        <div class="img-input-row">
+          <input type="text" id="f_image" placeholder="이미지 URL (https://...)">
+          <input type="file" id="f_imagefile" accept="image/*">
+        </div>
+        <div class="img-hint">URL을 붙여넣거나 파일을 선택하세요 — 크기·화질 제한 없이 자동으로 최적화돼요</div>
+        <div class="img-preview" id="imgPreview"></div>
+      </div>
+      <div class="row2">
+        <div class="field">
+          <label>링크 (선택)</label>
+          <input type="text" id="f_link" placeholder="https://brunch.co.kr/...">
+        </div>
+        <div class="field">
+          <label>태그 (쉼표로 구분)</label>
+          <input type="text" id="f_tags" placeholder="감정, 성숙함, 언어">
+        </div>
+      </div>
+      <div class="toggle-row">
+        <input type="checkbox" id="f_public">
+        <label for="f_public">포트폴리오에 공개하기 (다른 사람도 볼 수 있어요)</label>
+      </div>
+      <button class="save-btn" id="saveBtn">저장하기</button>
+    </div>
+
+    <div id="entryList"></div>
+  </div>
+
+  <!-- IMAGE BOARDS MODE -->
+  <div id="boardsMode" style="display:none;">
+    <div id="boardsContent"></div>
+  </div>
+
+  <!-- PORTFOLIO MODE -->
+  <div id="portfolioMode" style="display:none;">
+    <button class="print-btn" onclick="window.print()">🖨 인쇄 / PDF로 저장</button>
+    <button class="profile-toggle" id="profileToggle">✎ 소개 · 링크 편집</button>
+
+    <div class="profile-card" id="profileCard">
+      <div class="field">
+        <label>프로필 사진</label>
+        <div class="avatar-edit-row">
+          <div class="avatar-preview" id="avatarPreview">👤</div>
+          <div class="avatar-edit-inputs">
+            <div class="img-input-row">
+              <input type="text" id="p_avatar" placeholder="이미지 URL (https://...)">
+              <input type="file" id="p_avatarfile" accept="image/*">
+            </div>
+            <div class="img-hint">정사각형에 가까운 사진이 잘 어울려요 — 크기 제한 없이 자동으로 맞춰져요</div>
+          </div>
+        </div>
+      </div>
+      <div class="field">
+        <label>이름</label>
+        <input type="text" id="p_name" placeholder="설보라">
+      </div>
+      <div class="field">
+        <label>한 줄 소개</label>
+        <input type="text" id="p_tagline" placeholder="Personal Archive — In Search of a Name">
+      </div>
+      <div class="field">
+        <label>링크</label>
+        <div id="linkRows"></div>
+        <button class="link-add" id="linkAdd" type="button">+ 링크 추가</button>
+      </div>
+      <button class="save-btn" id="profileSaveBtn">저장하기</button>
+    </div>
+
+    <div class="pf-header">
+      <div class="pf-avatar" id="pfAvatar">👤</div>
+      <h2 id="pfName">설보라</h2>
+      <p id="pfTagline">Personal Archive — In Search of a Name</p>
+      <div class="pf-links" id="pfLinks"></div>
+    </div>
+    <div id="portfolioContent"></div>
+  </div>
+
+</div>
+
+<!-- LIGHTBOX -->
+<div class="lightbox-overlay hidden" id="lightbox">
+  <button class="lightbox-close" id="lightboxClose">✕</button>
+  <div class="lightbox-box">
+    <div class="lightbox-img-wrap" id="lightboxImgWrap"></div>
+    <div class="lightbox-body">
+      <div class="lightbox-title" id="lightboxTitle"></div>
+      <div class="lightbox-meta" id="lightboxMeta"></div>
+      <div class="lightbox-desc" id="lightboxDesc"></div>
+      <a class="entry-link" id="lightboxLink" href="#" target="_blank" rel="noopener noreferrer" style="display:none;"></a>
+      <button class="save-btn lightbox-download" id="lightboxDownloadBtn" style="display:none;">⬇ 사진 저장하기</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast-stack" id="toastStack"></div>
+
+<!-- CUSTOM CONFIRM -->
+<div class="confirm-overlay hidden" id="confirmOverlay">
+  <div class="confirm-box">
+    <div class="confirm-msg" id="confirmMsg"></div>
+    <div class="confirm-actions">
+      <button class="confirm-btn confirm-cancel" id="confirmCancelBtn">취소</button>
+      <button class="confirm-btn confirm-ok" id="confirmOkBtn">확인</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const STORAGE_KEY = 'archive-entries';
+const PROFILE_KEY = 'archive-profile';
+const BOARDS_KEY = 'archive-boards';
+const CATEGORIES_KEY = 'archive-categories';
+let entries = [];
+let boards = [];
+let categories = [];
+let currentCat = 'all';
+let currentMode = 'archive';
+let currentBoardId = null;
+let pinSelectMode = false;
+let selectedPinIds = new Set();
+let profile = {
+  name: '설보라',
+  tagline: 'Personal Archive — In Search of a Name',
+  avatar: '',
+  links: [
+    { label: 'Instagram', url: 'https://instagram.com/bora.seo04' },
+    { label: 'YouTube', url: 'https://youtube.com/@seolbora' }
+  ]
+};
+
+/* ---------- app-like toast & confirm (no native browser dialogs) ---------- */
+
+function showToast(message){
+  const stack = document.getElementById('toastStack');
+  if(!stack){ console.log(message); return; }
+  const el = document.createElement('div');
+  el.className = 'toast';
+  el.textContent = message;
+  stack.appendChild(el);
+  requestAnimationFrame(() => el.classList.add('show'));
+  setTimeout(() => {
+    el.classList.remove('show');
+    setTimeout(() => el.remove(), 250);
+  }, 2600);
+}
+
+function confirmDialog(message){
+  return new Promise((resolve) => {
+    const overlay = document.getElementById('confirmOverlay');
+    document.getElementById('confirmMsg').textContent = message;
+    overlay.classList.remove('hidden');
+
+    const cleanup = (result) => {
+      overlay.classList.add('hidden');
+      okBtn.removeEventListener('click', onOk);
+      cancelBtn.removeEventListener('click', onCancel);
+      overlay.removeEventListener('click', onOverlay);
+      resolve(result);
+    };
+    const okBtn = document.getElementById('confirmOkBtn');
+    const cancelBtn = document.getElementById('confirmCancelBtn');
+    const onOk = () => cleanup(true);
+    const onCancel = () => cleanup(false);
+    const onOverlay = (ev) => { if(ev.target.id === 'confirmOverlay') cleanup(false); };
+
+    okBtn.addEventListener('click', onOk);
+    cancelBtn.addEventListener('click', onCancel);
+    overlay.addEventListener('click', onOverlay);
+  });
+}
+
+/* ---------- resilient storage helpers (retries transient backend errors) ---------- */
+
+/* Storage backend:
+   - Claude 미리보기 안에서는 window.storage 사용
+   - 그 외(GitHub Pages 등)에서는 IndexedDB 사용 → 용량 제한이 사실상 없어서
+     사진을 많이 넣어도 저장됨. IndexedDB를 못 쓰는 환경에선 localStorage로 대체 */
+const hasHostStorage = typeof window !== 'undefined'
+  && window.storage
+  && typeof window.storage.get === 'function'
+  && typeof window.storage.set === 'function';
+
+const IDB_NAME = 'seolbora-archive';
+const IDB_STORE = 'kv';
+let idbPromise = null;
+
+function openIDB(){
+  if(idbPromise) return idbPromise;
+  idbPromise = new Promise((resolve, reject) => {
+    if(!('indexedDB' in window)){ reject(new Error('IndexedDB 미지원')); return; }
+    const req = indexedDB.open(IDB_NAME, 1);
+    req.onupgradeneeded = () => {
+      const db = req.result;
+      if(!db.objectStoreNames.contains(IDB_STORE)) db.createObjectStore(IDB_STORE);
+    };
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = () => reject(req.error || new Error('IndexedDB 열기 실패'));
+  }).catch(err => { idbPromise = null; throw err; });
+  return idbPromise;
+}
+
+async function idbGet(key){
+  const db = await openIDB();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(IDB_STORE, 'readonly');
+    const req = tx.objectStore(IDB_STORE).get(key);
+    req.onsuccess = () => resolve(req.result === undefined ? null : req.result);
+    req.onerror = () => reject(req.error);
+  });
+}
+
+async function idbSet(key, value){
+  const db = await openIDB();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(IDB_STORE, 'readwrite');
+    tx.objectStore(IDB_STORE).put(value, key);
+    tx.oncomplete = () => resolve(true);
+    tx.onerror = () => reject(tx.error);
+    tx.onabort = () => reject(tx.error || new Error('저장 중단됨'));
+  });
+}
+
+async function storageGet(key, shared = false){
+  if(hasHostStorage){
+    try{
+      return await window.storage.get(key, shared);
+    }catch(e){
+      console.warn(`storage.get(${key}) failed, 로컬 저장소로 대체`, e);
+    }
+  }
+  try{
+    const value = await idbGet(key);
+    if(value !== null && value !== undefined) return { key, value };
+    // 예전 버전에서 localStorage에 저장해둔 내용이 있으면 옮겨옴
+    const legacy = localStorage.getItem(key);
+    if(legacy !== null){
+      try{ await idbSet(key, legacy); }catch(e){ /* 이전 실패해도 읽기는 가능 */ }
+      return { key, value: legacy };
+    }
+    return null;
+  }catch(e){
+    console.warn(`IndexedDB 읽기 실패(${key}), localStorage로 대체`, e);
+    try{
+      const value = localStorage.getItem(key);
+      return value === null ? null : { key, value };
+    }catch(e2){
+      return null;
+    }
+  }
+}
+
+async function storageSet(key, value, shared = false, retries = 3){
+  if(hasHostStorage){
+    for(let attempt = 0; attempt <= retries; attempt++){
+      try{
+        const res = await window.storage.set(key, value, shared);
+        if(res) return true;
+      }catch(e){
+        console.warn(`storage.set(${key}) attempt ${attempt + 1} failed`, e);
+      }
+      if(attempt < retries){
+        await new Promise(r => setTimeout(r, 350 * (attempt + 1)));
+      }
+    }
+  }
+  try{
+    await idbSet(key, value);
+    return true;
+  }catch(e){
+    console.warn(`IndexedDB 저장 실패(${key}), localStorage로 대체`, e);
+  }
+  try{
+    localStorage.setItem(key, value);
+    return true;
+  }catch(e){
+    console.warn(`localStorage.setItem(${key}) failed`, e);
+    return false;
+  }
+}
+
+async function loadEntries(){
+  const res = await storageGet(STORAGE_KEY, false);
+  entries = res && res.value ? JSON.parse(res.value) : [];
+  await loadProfile();
+  render();
+}
+
+async function saveEntries(){
+  const ok = await storageSet(STORAGE_KEY, JSON.stringify(entries), false);
+  if(!ok){
+    showToast('저장에 실패했어요. 이미지 용량이 너무 크면 URL 방식을 사용해보세요.');
+  }
+  return ok;
+}
+
+async function loadCategories(){
+  const res = await storageGet(CATEGORIES_KEY, false);
+  categories = res && res.value ? JSON.parse(res.value) : null;
+  if(!categories || categories.length === 0){
+    categories = [
+      { id: '글기록', label: '글 기록' },
+      { id: '취향수집', label: '취향 수집' },
+      { id: '사진기록', label: '사진 기록' },
+      { id: '포트폴리오', label: '포트폴리오 대표작' }
+    ];
+    await saveCategories();
+  }
+  renderTabs();
+  renderCatSelect();
+  renderCatManage();
+}
+
+async function saveCategories(){
+  const ok = await storageSet(CATEGORIES_KEY, JSON.stringify(categories), false);
+  if(!ok){
+    showToast('카테고리 저장에 실패했어요. 다시 시도해주세요.');
+  }
+  return ok;
+}
+
+function catLabel(id){
+  const c = categories.find(x => x.id === id);
+  return c ? c.label : id;
+}
+
+function renderTabs(){
+  const row = document.getElementById('tabsRow');
+  if(!row) return;
+  const allBtn = `<button class="tab ${currentCat === 'all' ? 'active' : ''}" data-cat="all">전체</button>`;
+  const catBtns = categories.map(c => `<button class="tab ${currentCat === c.id ? 'active' : ''}" data-cat="${escapeHtml(c.id)}">${escapeHtml(c.label)}</button>`).join('');
+  row.innerHTML = allBtn + catBtns;
+  row.querySelectorAll('.tab').forEach(btn => {
+    btn.addEventListener('click', () => {
+      currentCat = btn.dataset.cat;
+      renderTabs();
+      if(currentMode === 'archive') renderArchive();
+    });
+  });
+}
+
+function renderCatSelect(){
+  const sel = document.getElementById('f_cat');
+  if(!sel) return;
+  const prev = sel.value;
+  sel.innerHTML = categories.map(c => `<option value="${escapeHtml(c.id)}">${escapeHtml(c.label)}</option>`).join('');
+  if(categories.some(c => c.id === prev)) sel.value = prev;
+}
+
+function renderCatManage(){
+  const panel = document.getElementById('catManage');
+  if(!panel) return;
+  panel.innerHTML = `
+    <div class="cat-manage-list" id="catManageList">
+      ${categories.map(c => `
+        <div class="cat-row">
+          <span>${escapeHtml(c.label)}</span>
+          <button type="button" class="cat-remove" onclick="removeCategory('${c.id}')">✕</button>
+        </div>
+      `).join('') || `<div class="img-hint">카테고리가 없어요.</div>`}
+    </div>
+    <div class="cat-add-row">
+      <input type="text" id="newCatName" placeholder="새 카테고리 이름 (예: 여행 기록)">
+      <button class="save-btn" id="addCatBtn">추가</button>
+    </div>
+  `;
+  document.getElementById('addCatBtn').addEventListener('click', addCategory);
+  document.getElementById('newCatName').addEventListener('keydown', (ev) => {
+    if(ev.key === 'Enter') addCategory();
+  });
+}
+
+async function addCategory(){
+  const input = document.getElementById('newCatName');
+  const name = input.value.trim();
+  if(!name){ showToast('카테고리 이름을 입력해주세요'); return; }
+  if(categories.some(c => c.id === name)){ showToast('이미 있는 카테고리예요'); return; }
+
+  const prevCategories = categories.slice();
+  categories.push({ id: name, label: name });
+  renderCatManage();
+  renderTabs();
+  renderCatSelect();
+  input.value = '';
+
+  const ok = await saveCategories();
+  if(!ok){
+    categories = prevCategories;
+    renderCatManage();
+    renderTabs();
+    renderCatSelect();
+  }
+}
+
+async function removeCategory(id){
+  if(categories.length <= 1){ showToast('최소 1개의 카테고리는 있어야 해요'); return; }
+
+  const prevCategories = categories.slice();
+  const prevCat = currentCat;
+  categories = categories.filter(c => c.id !== id);
+  if(currentCat === id) currentCat = 'all';
+  renderCatManage();
+  renderTabs();
+  renderCatSelect();
+  if(currentMode === 'archive') renderArchive();
+
+  const ok = await saveCategories();
+  if(!ok){
+    categories = prevCategories;
+    currentCat = prevCat;
+    renderCatManage();
+    renderTabs();
+    renderCatSelect();
+    if(currentMode === 'archive') renderArchive();
+  }
+}
+
+async function loadBoards(){
+  const res = await storageGet(BOARDS_KEY, false);
+  boards = res && res.value ? JSON.parse(res.value) : [];
+  if(currentMode === 'boards') render();
+}
+
+async function saveBoards(){
+  const ok = await storageSet(BOARDS_KEY, JSON.stringify(boards), false);
+  if(!ok){
+    showToast('저장에 실패했어요. 이미지 용량이 너무 크면 URL 방식을 사용해보세요.');
+  }
+  return ok;
+}
+
+async function loadProfile(){
+  const res = await storageGet(PROFILE_KEY, false);
+  if(res && res.value){
+    profile = JSON.parse(res.value);
+  }else{
+    await saveProfile();
+  }
+  renderProfileForm();
+}
+
+async function saveProfile(){
+  const ok = await storageSet(PROFILE_KEY, JSON.stringify(profile), false);
+  if(!ok){
+    showToast('프로필 저장에 실패했어요.');
+  }
+  return ok;
+}
+
+function renderProfileForm(){
+  document.getElementById('p_name').value = profile.name;
+  document.getElementById('p_tagline').value = profile.tagline;
+  document.getElementById('p_avatar').value = profile.avatar || '';
+  updateAvatarPreview(profile.avatar || '');
+  const rows = document.getElementById('linkRows');
+  rows.innerHTML = profile.links.map((l, i) => `
+    <div class="link-row" data-i="${i}">
+      <input type="text" class="link-label" placeholder="라벨 (예: Instagram)" value="${escapeHtml(l.label)}" data-field="label">
+      <input type="text" placeholder="https://..." value="${escapeHtml(l.url)}" data-field="url">
+      <button type="button" class="link-remove" onclick="removeLinkRow(${i})">✕</button>
+    </div>
+  `).join('');
+  renderAvatars();
+}
+
+function avatarImgOrPlaceholder(src){
+  return src ? `<img src="${escapeHtml(src)}" alt="">` : '👤';
+}
+
+function updateAvatarPreview(src){
+  document.getElementById('avatarPreview').innerHTML = avatarImgOrPlaceholder(src);
+}
+
+function renderAvatars(){
+  const brandEl = document.getElementById('brandAvatar');
+  const pfEl = document.getElementById('pfAvatar');
+  if(brandEl) brandEl.innerHTML = avatarImgOrPlaceholder(profile.avatar);
+  if(pfEl) pfEl.innerHTML = avatarImgOrPlaceholder(profile.avatar);
+}
+
+function removeLinkRow(i){
+  profile.links.splice(i, 1);
+  renderProfileForm();
+}
+
+function fmtDate(iso){
+  const d = new Date(iso);
+  return `${d.getFullYear()}.${String(d.getMonth()+1).padStart(2,'0')}.${String(d.getDate()).padStart(2,'0')}`;
+}
+
+function timeAgoShort(iso){
+  const diffMs = Date.now() - new Date(iso).getTime();
+  const min = Math.floor(diffMs / 60000);
+  if(min < 1) return '방금';
+  if(min < 60) return `${min}분`;
+  const hr = Math.floor(min / 60);
+  if(hr < 24) return `${hr}시간`;
+  const day = Math.floor(hr / 24);
+  if(day < 30) return `${day}일`;
+  const month = Math.floor(day / 30);
+  if(month < 12) return `${month}개월`;
+  const year = Math.floor(month / 12);
+  return `${year}년`;
+}
+
+function render(){
+  if(currentMode === 'archive'){
+    renderArchive();
+  }else if(currentMode === 'boards'){
+    renderBoardsMode();
+  }else{
+    renderPortfolio();
+  }
+}
+
+function renderArchive(){
+  const list = document.getElementById('entryList');
+  const filtered = entries
+    .filter(e => currentCat === 'all' || e.cat === currentCat)
+    .sort((a,b) => new Date(b.date) - new Date(a.date));
+
+  if(filtered.length === 0){
+    list.innerHTML = `<div class="empty">아직 기록이 없어요. 위에서 첫 기록을 추가해보세요.</div>`;
+    return;
+  }
+
+  if(currentCat === '사진기록'){
+    list.innerHTML = galleryGridHtml(filtered, true);
+    return;
+  }
+
+  list.innerHTML = filtered.map(e => entryCardHtml(e, true)).join('');
+}
+
+function entryCardHtml(e, showActions){
+  return `
+    <div class="entry ${e.public ? 'public' : ''}">
+      ${e.image ? `<div class="entry-thumb"><img src="${escapeHtml(e.image)}" alt=""></div>` : ''}
+      <div class="entry-body">
+        <div class="entry-top">
+          <div>
+            <div class="entry-title">${escapeHtml(e.title)}</div>
+            <div class="entry-meta">
+              <span class="badge">${escapeHtml(catLabel(e.cat))}</span>
+              ${e.public ? '<span class="badge pub">공개</span>' : ''}
+              ${fmtDate(e.date)}
+            </div>
+          </div>
+          ${showActions ? `
+          <div class="entry-actions">
+            <button class="icon-btn" onclick="deleteEntry('${e.id}')">삭제</button>
+          </div>` : ''}
+        </div>
+        ${e.desc ? `<div class="entry-desc">${escapeHtml(e.desc)}</div>` : ''}
+        ${e.link ? `<div style="margin-top:8px;"><a class="entry-link" href="${escapeHtml(e.link)}" target="_blank" rel="noopener noreferrer">${escapeHtml(e.link)}</a></div>` : ''}
+        ${e.tags && e.tags.length ? `<div style="margin-top:8px;font-size:11px;color:var(--stone);">${e.tags.map(t=>'#'+t).join('  ')}</div>` : ''}
+      </div>
+    </div>
+  `;
+}
+
+function galleryGridHtml(items, clickable){
+  return `<div class="gallery-grid">` + items.map(e => `
+    <div class="gallery-item" ${clickable ? `onclick="openLightbox('${e.id}')"` : ''}>
+      ${e.image ? `<img src="${escapeHtml(e.image)}" alt="${escapeHtml(e.title)}">` : `<div class="gallery-noimg">🖼</div>`}
+      ${e.public ? `<div class="gallery-pub-dot"></div>` : ''}
+      <div class="gallery-caption">
+        <div class="gallery-title">${escapeHtml(e.title)}</div>
+        <div class="gallery-date">${fmtDate(e.date)}</div>
+      </div>
+    </div>
+  `).join('') + `</div>`;
+}
+
+function triggerDownload(src, filename){
+  if(!src) return;
+  const a = document.createElement('a');
+  a.href = src;
+  a.download = filename || 'image.jpg';
+  if(!src.startsWith('data:')){
+    // 외부 URL은 다운로드 속성이 브라우저에 따라 무시될 수 있어, 새 탭으로 열어 저장할 수 있게 함
+    a.target = '_blank';
+    a.rel = 'noopener noreferrer';
+  }
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+}
+
+function safeFilename(name){
+  return (name || 'image').replace(/[\\/:*?"<>|]+/g, '_').trim().slice(0, 60) || 'image';
+}
+
+function setupLightboxDownload(image, filenameBase){
+  const btn = document.getElementById('lightboxDownloadBtn');
+  if(!image){
+    btn.style.display = 'none';
+    btn.onclick = null;
+    return;
+  }
+  btn.style.display = 'block';
+  btn.onclick = () => triggerDownload(image, `${safeFilename(filenameBase)}.jpg`);
+}
+
+function openLightbox(id){
+  const e = entries.find(x => x.id === id);
+  if(!e) return;
+  document.getElementById('lightboxImgWrap').innerHTML = e.image
+    ? `<img src="${escapeHtml(e.image)}" alt="${escapeHtml(e.title)}">`
+    : '';
+  document.getElementById('lightboxTitle').textContent = e.title;
+  document.getElementById('lightboxMeta').textContent = `${e.cat} · ${fmtDate(e.date)}${e.public ? ' · 공개' : ''}`;
+  document.getElementById('lightboxDesc').textContent = e.desc || '';
+  const linkEl = document.getElementById('lightboxLink');
+  if(e.link){
+    linkEl.href = e.link;
+    linkEl.textContent = e.link;
+    linkEl.style.display = 'inline-block';
+  }else{
+    linkEl.style.display = 'none';
+  }
+  setupLightboxDownload(e.image, e.title);
+  document.getElementById('lightbox').classList.remove('hidden');
+}
+
+function closeLightbox(){
+  document.getElementById('lightbox').classList.add('hidden');
+}
+
+/* ---------- IMAGE BOARDS ---------- */
+
+function renderBoardsMode(){
+  if(currentBoardId){
+    renderBoardDetail();
+  }else{
+    renderBoardList();
+  }
+}
+
+function renderBoardList(){
+  const container = document.getElementById('boardsContent');
+  const sorted = boards.slice().sort((a,b) => new Date(b.updatedAt) - new Date(a.updatedAt));
+
+  const gridHtml = sorted.length === 0
+    ? `<div class="empty">아직 만든 보드가 없어요.<br>위에서 새 보드를 만들어 이미지를 모아보세요.</div>`
+    : `<div class="board-grid">${sorted.map(boardCardHtml).join('')}</div>`;
+
+  container.innerHTML = `
+    <div class="board-create-row">
+      <input type="text" id="newBoardName" placeholder="예: 미국 하이틴, 대만 감성, 자연 사진">
+      <button class="save-btn" id="createBoardBtn">+ 새 보드</button>
+    </div>
+    ${gridHtml}
+  `;
+
+  document.getElementById('createBoardBtn').addEventListener('click', createBoard);
+  document.getElementById('newBoardName').addEventListener('keydown', (ev) => {
+    if(ev.key === 'Enter') createBoard();
+  });
+}
+
+function boardCardHtml(b){
+  const pins = b.pins || [];
+  const cover = pins.slice(0, 3);
+  const cell = (p, isMain) => p
+    ? `<img class="${isMain ? 'main' : ''}" src="${escapeHtml(p.image)}" alt="">`
+    : `<div class="ph ${isMain ? 'main' : ''}">🖼</div>`;
+
+  return `
+    <div class="board-card" onclick="openBoard('${b.id}')">
+      <div class="board-cover">
+        ${cell(cover[0], true)}
+        ${cell(cover[1], false)}
+        ${cell(cover[2], false)}
+      </div>
+      <div class="board-name">${escapeHtml(b.name)}</div>
+      <div class="board-meta">핀 ${pins.length}개 · ${timeAgoShort(b.updatedAt)}</div>
+    </div>
+  `;
+}
+
+async function createBoard(){
+  const input = document.getElementById('newBoardName');
+  const name = input.value.trim();
+  if(!name){ showToast('보드 이름을 입력해주세요'); return; }
+  const now = new Date().toISOString();
+  boards.push({ id: Date.now().toString(), name, pins: [], createdAt: now, updatedAt: now });
+  await saveBoards();
+  renderBoardList();
+}
+
+function openBoard(id){
+  currentBoardId = id;
+  pinSelectMode = false;
+  selectedPinIds.clear();
+  render();
+}
+
+function closeBoard(){
+  currentBoardId = null;
+  pinSelectMode = false;
+  selectedPinIds.clear();
+  render();
+}
+
+async function deleteBoard(id){
+  if(!(await confirmDialog('이 보드를 삭제할까요? 모아둔 이미지도 함께 사라져요.'))) return;
+  boards = boards.filter(b => b.id !== id);
+  await saveBoards();
+  currentBoardId = null;
+  render();
+}
+
+function renderBoardDetail(){
+  const b = boards.find(x => x.id === currentBoardId);
+  const container = document.getElementById('boardsContent');
+  if(!b){
+    currentBoardId = null;
+    renderBoardList();
+    return;
+  }
+  const pins = (b.pins || []).slice().sort((a,c) => new Date(c.addedAt) - new Date(a.addedAt));
+
+  const toolbarHtml = pins.length === 0 ? '' : `
+    <div class="pin-toolbar">
+      <div class="count">핀 ${pins.length}개${pinSelectMode ? ` · ${selectedPinIds.size}개 선택됨` : ''}</div>
+      <div class="pin-bulk-actions">
+        ${pinSelectMode ? `<button class="pin-bulk-delete" id="pinBulkDeleteBtn" ${selectedPinIds.size === 0 ? 'disabled' : ''}>선택 삭제</button>` : ''}
+        <button class="pin-select-toggle ${pinSelectMode ? 'active' : ''}" id="pinSelectToggleBtn">${pinSelectMode ? '선택 취소' : '여러 장 선택'}</button>
+      </div>
+    </div>
+  `;
+
+  const galleryHtml = pins.length === 0
+    ? `<div class="empty">아직 저장된 이미지가 없어요.</div>`
+    : `<div class="gallery-grid">${pins.map(p => {
+        const isSel = selectedPinIds.has(p.id);
+        const clickAttr = pinSelectMode
+          ? `onclick="togglePinSelect('${p.id}')"`
+          : `onclick="openPinLightbox('${b.id}','${p.id}')"`;
+        return `
+          <div class="gallery-item ${pinSelectMode ? 'selecting' : ''} ${isSel ? 'selected' : ''}" ${clickAttr}>
+            ${p.image ? `<img src="${escapeHtml(p.image)}" alt="">` : `<div class="gallery-noimg">🖼</div>`}
+            ${pinSelectMode
+              ? `<div class="pin-select-dot">${isSel ? '✓' : ''}</div>`
+              : `
+                <button class="pin-remove-btn" onclick="event.stopPropagation();deletePin('${b.id}','${p.id}')" title="삭제">✕</button>
+                <button class="pin-download-btn" onclick="event.stopPropagation();downloadPinImage('${b.id}','${p.id}')" title="사진첩/파일에 저장">⬇</button>
+              `}
+            ${p.caption ? `<div class="gallery-caption"><div class="gallery-title">${escapeHtml(p.caption)}</div></div>` : ''}
+          </div>
+        `;
+      }).join('')}</div>`;
+
+  container.innerHTML = `
+    <div class="board-detail-header">
+      <button class="back-btn" onclick="closeBoard()">← 목록</button>
+      <div class="board-detail-title">${escapeHtml(b.name)}</div>
+      <button class="board-delete-btn" onclick="deleteBoard('${b.id}')">보드 삭제</button>
+    </div>
+
+    <div class="add-card open">
+      <div class="field">
+        <label>이미지 추가</label>
+        <div class="img-input-row">
+          <input type="text" id="pin_image" placeholder="이미지 URL (https://...)">
+          <input type="file" id="pin_imagefile" accept="image/*" multiple>
+        </div>
+        <div class="img-hint">여러 장을 한 번에 선택하면 바로 전부 추가돼요 — 크기·화질 제한 없이 자동으로 최적화돼요</div>
+        <div class="img-preview" id="pinImgPreview"></div>
+      </div>
+      <div class="field">
+        <label>캡션 (선택)</label>
+        <input type="text" id="pin_caption" placeholder="이 이미지에 대한 짧은 메모 (파일을 한 번에 여러 장 선택하면 적용되지 않아요)">
+      </div>
+      <button class="save-btn" id="addPinBtn">핀 추가하기</button>
+    </div>
+
+    ${toolbarHtml}
+    ${galleryHtml}
+  `;
+
+  document.getElementById('pin_imagefile').addEventListener('change', (ev) => pinFileHandler(ev, b.id));
+  document.getElementById('pin_image').addEventListener('input', (ev) => {
+    updatePinPreview(ev.target.value.trim());
+  });
+  document.getElementById('addPinBtn').addEventListener('click', () => addPin(b.id));
+
+  const toggleBtn = document.getElementById('pinSelectToggleBtn');
+  if(toggleBtn) toggleBtn.addEventListener('click', togglePinSelectMode);
+  const bulkDeleteBtn = document.getElementById('pinBulkDeleteBtn');
+  if(bulkDeleteBtn) bulkDeleteBtn.addEventListener('click', () => deleteSelectedPins(b.id));
+}
+
+function togglePinSelectMode(){
+  pinSelectMode = !pinSelectMode;
+  selectedPinIds.clear();
+  renderBoardDetail();
+}
+
+function togglePinSelect(pinId){
+  if(selectedPinIds.has(pinId)) selectedPinIds.delete(pinId);
+  else selectedPinIds.add(pinId);
+  renderBoardDetail();
+}
+
+async function deleteSelectedPins(boardId){
+  if(selectedPinIds.size === 0) return;
+  const ok = await confirmDialog(`선택한 ${selectedPinIds.size}장을 삭제할까요?`);
+  if(!ok) return;
+
+  const b = boards.find(x => x.id === boardId);
+  if(!b) return;
+  b.pins = (b.pins || []).filter(p => !selectedPinIds.has(p.id));
+  b.updatedAt = new Date().toISOString();
+  selectedPinIds.clear();
+  pinSelectMode = false;
+
+  await saveBoards();
+  renderBoardDetail();
+}
+
+/* 이미지 처리: 원본 크기·화질에 상관없이 받아서 저장 가능한 형태로 자동 변환 */
+async function processImage(file, opts = {}){
+  const maxDim = opts.maxDim || 1800;
+  const targetBytes = opts.targetBytes || 900 * 1024;
+
+  const dataUrl = await new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = () => reject(new Error('파일을 읽지 못했어요'));
+    reader.readAsDataURL(file);
+  });
+
+  const img = await new Promise((resolve, reject) => {
+    const im = new Image();
+    im.onload = () => resolve(im);
+    im.onerror = () => reject(new Error('이미지를 열지 못했어요'));
+    im.src = dataUrl;
+  });
+
+  let w = img.naturalWidth || img.width;
+  let h = img.naturalHeight || img.height;
+  if(!w || !h) return dataUrl;
+
+  // 긴 변 기준으로 축소 (비율 유지)
+  let scale = Math.min(1, maxDim / Math.max(w, h));
+  let quality = 0.88;
+  let out = dataUrl;
+
+  for(let attempt = 0; attempt < 14; attempt++){
+    const cw = Math.max(1, Math.round(w * scale));
+    const ch = Math.max(1, Math.round(h * scale));
+    const canvas = document.createElement('canvas');
+    canvas.width = cw;
+    canvas.height = ch;
+    const ctx = canvas.getContext('2d');
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = 'high';
+    // 투명 배경 사진도 깨지지 않도록 흰 배경을 깔고 그림
+    ctx.fillStyle = '#FFFFFF';
+    ctx.fillRect(0, 0, cw, ch);
+    ctx.drawImage(img, 0, 0, cw, ch);
+
+    out = canvas.toDataURL('image/jpeg', quality);
+    // dataURL 길이로 대략적인 바이트 수 추정
+    const bytes = Math.ceil((out.length - out.indexOf(',') - 1) * 3 / 4);
+    if(bytes <= targetBytes) return out;
+
+    // 아직 크면 화질을 먼저 낮추고, 더 못 낮추면 크기를 줄임
+    if(quality > 0.42){
+      quality -= 0.12;
+    }else{
+      scale *= 0.7;
+      quality = 0.72;
+    }
+  }
+  return out;
+}
+
+async function handleImageFileInput(ev, targetInputId, previewFn, opts){
+  const file = ev.target.files[0];
+  if(!file) return;
+  if(!file.type.startsWith('image/')){
+    showToast('이미지 파일을 선택해주세요.');
+    ev.target.value = '';
+    return;
+  }
+  showToast('사진을 준비하고 있어요…');
+  try{
+    const processed = await processImage(file, opts);
+    document.getElementById(targetInputId).value = processed;
+    previewFn(processed);
+  }catch(e){
+    console.warn('이미지 처리 실패', e);
+    showToast('사진을 불러오지 못했어요. 다른 파일을 시도해보세요.');
+  }finally{
+    ev.target.value = '';
+  }
+}
+
+async function pinFileHandler(ev, boardId){
+  const files = Array.from(ev.target.files || []);
+  if(files.length === 0) return;
+
+  const invalid = files.some(f => !f.type.startsWith('image/'));
+  if(invalid){
+    showToast('이미지 파일만 선택해주세요.');
+    ev.target.value = '';
+    return;
+  }
+
+  if(files.length === 1){
+    // 한 장만 선택: 기존처럼 미리보기 후 '핀 추가하기'로 등록
+    handleImageFileInput(ev, 'pin_image', updatePinPreview, { maxDim: 1800, targetBytes: 900 * 1024 });
+    return;
+  }
+
+  // 여러 장 선택: 바로 전부 핀으로 추가
+  const b = boards.find(x => x.id === boardId);
+  if(!b){ ev.target.value = ''; return; }
+  showToast(`사진 ${files.length}장을 준비하고 있어요…`);
+
+  b.pins = b.pins || [];
+  let added = 0;
+  for(const file of files){
+    try{
+      const processed = await processImage(file, { maxDim: 1800, targetBytes: 900 * 1024 });
+      b.pins.push({
+        id: `${Date.now()}-${added}-${Math.random().toString(36).slice(2, 7)}`,
+        image: processed,
+        caption: '',
+        addedAt: new Date().toISOString()
+      });
+      added++;
+    }catch(e){
+      console.warn('이미지 처리 실패', e);
+    }
+  }
+  b.updatedAt = new Date().toISOString();
+  ev.target.value = '';
+
+  const ok = await saveBoards();
+  if(ok) showToast(`${added}장 추가됐어요.`);
+  renderBoardDetail();
+}
+
+function updatePinPreview(src){
+  const preview = document.getElementById('pinImgPreview');
+  preview.innerHTML = src ? `<img src="${escapeHtml(src)}" alt="">` : '';
+}
+
+async function addPin(boardId){
+  const image = document.getElementById('pin_image').value.trim();
+  const caption = document.getElementById('pin_caption').value.trim();
+  if(!image){ showToast('이미지 URL을 입력하거나 파일을 선택해주세요'); return; }
+
+  const b = boards.find(x => x.id === boardId);
+  if(!b) return;
+  const now = new Date().toISOString();
+  b.pins = b.pins || [];
+  b.pins.push({ id: Date.now().toString(), image, caption, addedAt: now });
+  b.updatedAt = now;
+
+  await saveBoards();
+  renderBoardDetail();
+}
+
+async function deletePin(boardId, pinId){
+  const b = boards.find(x => x.id === boardId);
+  if(!b) return;
+  b.pins = (b.pins || []).filter(p => p.id !== pinId);
+  b.updatedAt = new Date().toISOString();
+  await saveBoards();
+  renderBoardDetail();
+}
+
+function openPinLightbox(boardId, pinId){
+  const b = boards.find(x => x.id === boardId);
+  if(!b) return;
+  const p = (b.pins || []).find(x => x.id === pinId);
+  if(!p) return;
+  document.getElementById('lightboxImgWrap').innerHTML = p.image
+    ? `<img src="${escapeHtml(p.image)}" alt="">`
+    : '';
+  document.getElementById('lightboxTitle').textContent = p.caption || b.name;
+  document.getElementById('lightboxMeta').textContent = `${b.name} · ${fmtDate(p.addedAt)}`;
+  document.getElementById('lightboxDesc').textContent = '';
+  document.getElementById('lightboxLink').style.display = 'none';
+  setupLightboxDownload(p.image, p.caption || b.name);
+  document.getElementById('lightbox').classList.remove('hidden');
+}
+
+function downloadPinImage(boardId, pinId){
+  const b = boards.find(x => x.id === boardId);
+  if(!b) return;
+  const p = (b.pins || []).find(x => x.id === pinId);
+  if(!p || !p.image) return;
+  triggerDownload(p.image, `${safeFilename(p.caption || b.name)}.jpg`);
+}
+
+/* ---------- PORTFOLIO ---------- */
+
+function renderPortfolioHeader(){
+  document.getElementById('pfName').textContent = profile.name;
+  document.getElementById('pfTagline').textContent = profile.tagline;
+  const linksEl = document.getElementById('pfLinks');
+  linksEl.innerHTML = (profile.links || [])
+    .filter(l => l.url)
+    .map(l => `<a class="pf-link-pill" href="${escapeHtml(l.url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(l.label || l.url)}</a>`)
+    .join('');
+  renderAvatars();
+}
+
+function renderPortfolio(){
+  renderPortfolioHeader();
+  const container = document.getElementById('portfolioContent');
+  const pub = entries.filter(e => e.public);
+
+  if(pub.length === 0){
+    container.innerHTML = `<div class="empty">아직 공개로 설정한 기록이 없어요.<br>아카이브에서 '포트폴리오에 공개하기'를 체크해보세요.</div>`;
+    return;
+  }
+
+  const knownIds = categories.map(c => c.id);
+  const orphanIds = [...new Set(pub.map(e => e.cat))].filter(id => !knownIds.includes(id));
+  const catIds = [...knownIds, ...orphanIds];
+
+  container.innerHTML = catIds.map(catId => {
+    const items = pub.filter(e => e.cat === catId).sort((a,b)=> new Date(b.date)-new Date(a.date));
+    if(items.length === 0) return '';
+    const label = catLabel(catId);
+    if(catId === '사진기록'){
+      return `
+        <div class="pf-section">
+          <h3>${escapeHtml(label)}</h3>
+          ${galleryGridHtml(items, false)}
+        </div>
+      `;
+    }
+    return `
+      <div class="pf-section">
+        <h3>${escapeHtml(label)}</h3>
+        ${items.map(e => `
+          <div class="pf-item">
+            <div class="t">${escapeHtml(e.title)}</div>
+            ${e.desc ? `<div class="d">${escapeHtml(e.desc)}</div>` : ''}
+            ${e.link ? `<a href="${escapeHtml(e.link)}" target="_blank" rel="noopener noreferrer">${escapeHtml(e.link)}</a>` : ''}
+          </div>
+        `).join('')}
+      </div>
+    `;
+  }).join('');
+}
+
+function escapeHtml(s){
+  const d = document.createElement('div');
+  d.textContent = s || '';
+  return d.innerHTML;
+}
+
+async function deleteEntry(id){
+  entries = entries.filter(e => e.id !== id);
+  await saveEntries();
+  render();
+}
+
+document.getElementById('addToggle').addEventListener('click', () => {
+  document.getElementById('addCard').classList.toggle('open');
+});
+
+document.getElementById('f_imagefile').addEventListener('change', (ev) => {
+  handleImageFileInput(ev, 'f_image', updateImgPreview, { maxDim: 1800, targetBytes: 900 * 1024 });
+});
+
+document.getElementById('f_image').addEventListener('input', (ev) => {
+  updateImgPreview(ev.target.value.trim());
+});
+
+function updateImgPreview(src){
+  const preview = document.getElementById('imgPreview');
+  preview.innerHTML = src ? `<img src="${escapeHtml(src)}" alt="">` : '';
+}
+
+document.getElementById('saveBtn').addEventListener('click', async () => {
+  const title = document.getElementById('f_title').value.trim();
+  if(!title){ showToast('제목을 입력해주세요'); return; }
+
+  const entry = {
+    id: Date.now().toString(),
+    cat: document.getElementById('f_cat').value,
+    title: title,
+    desc: document.getElementById('f_desc').value.trim(),
+    image: document.getElementById('f_image').value.trim(),
+    link: document.getElementById('f_link').value.trim(),
+    tags: document.getElementById('f_tags').value.split(',').map(t=>t.trim()).filter(Boolean),
+    public: document.getElementById('f_public').checked,
+    date: new Date().toISOString()
+  };
+
+  entries.push(entry);
+  await saveEntries();
+
+  document.getElementById('f_title').value = '';
+  document.getElementById('f_desc').value = '';
+  document.getElementById('f_image').value = '';
+  document.getElementById('f_imagefile').value = '';
+  document.getElementById('imgPreview').innerHTML = '';
+  document.getElementById('f_link').value = '';
+  document.getElementById('f_tags').value = '';
+  document.getElementById('f_public').checked = false;
+  document.getElementById('addCard').classList.remove('open');
+
+  render();
+});
+
+document.getElementById('profileToggle').addEventListener('click', () => {
+  document.getElementById('profileCard').classList.toggle('open');
+});
+
+document.getElementById('p_avatarfile').addEventListener('change', (ev) => {
+  handleImageFileInput(ev, 'p_avatar', updateAvatarPreview, { maxDim: 640, targetBytes: 260 * 1024 });
+});
+
+document.getElementById('p_avatar').addEventListener('input', (ev) => {
+  updateAvatarPreview(ev.target.value.trim());
+});
+
+document.getElementById('linkAdd').addEventListener('click', () => {
+  profile.links.push({ label: '', url: '' });
+  renderProfileForm();
+});
+
+document.getElementById('profileSaveBtn').addEventListener('click', async () => {
+  profile.name = document.getElementById('p_name').value.trim() || '설보라';
+  profile.tagline = document.getElementById('p_tagline').value.trim();
+  profile.avatar = document.getElementById('p_avatar').value.trim();
+  const rows = document.querySelectorAll('#linkRows .link-row');
+  profile.links = Array.from(rows).map(row => ({
+    label: row.querySelector('[data-field="label"]').value.trim(),
+    url: row.querySelector('[data-field="url"]').value.trim()
+  })).filter(l => l.url);
+
+  await saveProfile();
+  renderProfileForm();
+  renderPortfolioHeader();
+  document.getElementById('profileCard').classList.remove('open');
+});
+
+document.getElementById('catEditToggle').addEventListener('click', () => {
+  document.getElementById('catManage').classList.toggle('open');
+});
+
+function switchMode(mode){
+  document.querySelectorAll('.mode-btn').forEach(b => b.classList.toggle('active', b.dataset.mode === mode));
+  currentMode = mode;
+  if(currentMode !== 'boards') currentBoardId = null;
+  document.getElementById('archiveMode').style.display = currentMode==='archive' ? 'block':'none';
+  document.getElementById('boardsMode').style.display = currentMode==='boards' ? 'block':'none';
+  document.getElementById('portfolioMode').style.display = currentMode==='portfolio' ? 'block':'none';
+  render();
+}
+
+document.querySelectorAll('.mode-btn').forEach(btn => {
+  btn.addEventListener('click', () => switchMode(btn.dataset.mode));
+});
+
+function openProfilePhotoEditor(){
+  switchMode('portfolio');
+  document.getElementById('profileCard').classList.add('open');
+  document.getElementById('profileCard').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+document.getElementById('brandAvatar').addEventListener('click', openProfilePhotoEditor);
+document.getElementById('pfAvatar').addEventListener('click', openProfilePhotoEditor);
+
+document.getElementById('lightboxClose').addEventListener('click', closeLightbox);
+document.getElementById('lightbox').addEventListener('click', (ev) => {
+  if(ev.target.id === 'lightbox') closeLightbox();
+});
+document.addEventListener('keydown', (ev) => {
+  if(ev.key === 'Escape') closeLightbox();
+});
+
+(async function init(){
+  await loadCategories();
+  await loadEntries();
+  await loadBoards();
+})();
+
+/* PWA: 오프라인 지원 + 홈 화면 앱 설치 (file:// 로 열었을 땐 자동으로 건너뜀) */
+if('serviceWorker' in navigator && location.protocol.startsWith('http')){
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').catch(err => {
+      console.warn('service worker 등록 실패', err);
+    });
+  });
+}
+</script>
+</body>
+</html>
